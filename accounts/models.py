@@ -65,9 +65,33 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.email
     
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+    
     def has_perm(self, perm, obj=None):
         return self.is_admin
     
     def has_module_perms(self, add_label):
         return True
+    
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=100, blank=True)
+    profile_picture = models.ImageField(upload_to='userprofile,', blank=True, null=True, default='default/user_avatar.png')
+    phone = models.CharField(max_length=50, blank=True)
+    city = models.CharField(max_length=30, blank=True)
+    state = models.CharField(max_length=30, blank=True)
+    country = models.CharField(max_length=30, blank=True)
+
+    def __str__(self):
+        return self.user.first_name
+    
+    @property
+    def imageURL(self):
+        try:
+            url = self.img.url
+        except:
+            url=''
+        return url
+
 
